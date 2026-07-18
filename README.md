@@ -25,23 +25,43 @@ Works over SSH, no browser required. macOS, Linux, and native Windows are all su
 
 ## Install
 
+Runs straight from the network, nothing saved to disk.
+
 ### macOS / Linux
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ArielRi/claude-code-multi-account-statusline/main/ccstatusline-install.sh -o ccstatusline-install.sh
-bash ccstatusline-install.sh
+bash <(curl -fsSL https://raw.githubusercontent.com/ArielRi/claude-code-multi-account-statusline/main/ccstatusline-install.sh)
 ```
+
+`curl ... | bash` also runs it, but process substitution (`bash <(...)`) is used
+instead because a plain pipe hands the script's own stdin to `bash`, breaking the
+`read` prompts — `<(...)` keeps your terminal attached so the prompts still work.
 
 ### Windows (PowerShell 5.1 or 7+)
 
 ```powershell
-irm https://raw.githubusercontent.com/ArielRi/claude-code-multi-account-statusline/main/ccstatusline-install.ps1 -OutFile ccstatusline-install.ps1
-.\ccstatusline-install.ps1
+iex (irm https://raw.githubusercontent.com/ArielRi/claude-code-multi-account-statusline/main/ccstatusline-install.ps1)
 ```
 
 If script execution is blocked, run once: `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`
 
+### Prefer to review the script first?
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ArielRi/claude-code-multi-account-statusline/main/ccstatusline-install.sh -o ccstatusline-install.sh
+less ccstatusline-install.sh && bash ccstatusline-install.sh
+```
+
+```powershell
+irm https://raw.githubusercontent.com/ArielRi/claude-code-multi-account-statusline/main/ccstatusline-install.ps1 -OutFile ccstatusline-install.ps1
+notepad ccstatusline-install.ps1; .\ccstatusline-install.ps1
+```
+
 ## Uninstall
+
+Passing `--uninstall`/`-Uninstall` needs a local copy of the script (see above to
+fetch one) — a bare `iex`/process-substitution one-liner has nothing to attach the
+flag to:
 
 ```bash
 bash ccstatusline-install.sh --uninstall

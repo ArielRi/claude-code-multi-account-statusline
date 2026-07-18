@@ -46,7 +46,14 @@ function Install-Node {
     if (Test-Tool node) { Ok "Node.js detected ($(node -v))"; return $true }
     WarnMsg "Node.js not found. Installing it (needed to run ccstatusline via npx)..."
     if (Test-Tool winget) {
-        winget install -e --id OpenJS.NodeJS.LTS --accept-source-agreements --accept-package-agreements | Out-Null
+        # Per-user install: no admin elevation prompt, and it lands in this
+        # user's own profile instead of a machine-wide location. Falls back to
+        # a plain (machine-scope) install if the manifest doesn't support
+        # --scope user.
+        winget install -e --id OpenJS.NodeJS.LTS --scope user --accept-source-agreements --accept-package-agreements | Out-Null
+        if (-not (Test-Tool node)) {
+            winget install -e --id OpenJS.NodeJS.LTS --accept-source-agreements --accept-package-agreements | Out-Null
+        }
     } elseif (Test-Tool choco) {
         choco install nodejs-lts -y | Out-Null
     } else {
