@@ -8,6 +8,8 @@ each with its own credentials and config.
 
 Works over SSH, no browser required. macOS, Linux, and native Windows are all supported.
 
+![Statusline example](images/statusline.png)
+
 ## What it does
 
 - Installs Node.js if missing, resolves the real `claude` binary path.
