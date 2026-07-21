@@ -13,6 +13,10 @@ Works over SSH, no browser required. macOS, Linux, and native Windows are all su
 ## What it does
 
 - Installs Node.js if missing, resolves the real `claude` binary path.
+- On macOS, installs a Nerd Font (Hack Nerd Font) if none is present — needed
+  for the statusline's powerline separators to render correctly instead of as
+  boxes with a "?". Not needed on Linux/Windows, whose terminals already
+  cover the glyph.
 - Lets you configure N accounts, each backed by its own `CLAUDE_CONFIG_DIR`
   (`~/.claude-<name>`), and adds a `claude-<name>` alias/function for each.
 - Installs [ccstatusline](https://www.npmjs.com/package/ccstatusline) with a minimalist
@@ -85,3 +89,7 @@ which hold your login credentials) are left untouched.
 - On Windows, aliases are written to both the Windows PowerShell 5.1 and
   PowerShell 7+ profile files, since most machines have both installed and
   either one might be what you open next.
+- If the installer installed a Nerd Font on your Mac, set it as your
+  terminal's font (Terminal.app: Settings > Profiles > Text; iTerm2:
+  Settings > Profiles > Text) — installing the font file doesn't switch your
+  terminal to use it automatically.

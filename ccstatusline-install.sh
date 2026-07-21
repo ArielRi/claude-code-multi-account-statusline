@@ -62,9 +62,37 @@ ensure_node() {
     ok "Node.js installed successfully ($(node -v))"
 }
 
+NERD_FONT_URL="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Hack.zip"
+NERD_FONT_INSTALLED_NOW=false
+
+# The statusline's powerline separators need a Nerd Font-patched font. On
+# Linux and Windows terminals this has been fine without any extra font (their
+# default/fallback fonts already cover the glyph); macOS's Terminal.app and
+# iTerm2 don't, so a fresh Mac renders the separator as a "?" in a box. Only
+# macOS needs this step.
+ensure_nerd_font_macos() {
+    [ "$PLATFORM" = "macos" ] || return 0
+    find "$HOME/Library/Fonts" /Library/Fonts -iname "*nerdfont*" 2>/dev/null | grep -q . \
+        && { ok "A Nerd Font is already installed"; return 0; }
+
+    warn "No Nerd Font found. Installing Hack Nerd Font (needed for the statusline's separator glyphs)..."
+    local font_dir="$HOME/Library/Fonts" tmp_dir
+    mkdir -p "$font_dir"
+    tmp_dir=$(mktemp -d) || return 1
+    if ! curl -fsSL "$NERD_FONT_URL" -o "$tmp_dir/Hack.zip"; then
+        fail "Could not download Hack Nerd Font. Install one manually: https://www.nerdfonts.com/font-downloads"
+        rm -rf "$tmp_dir"; return 1
+    fi
+    unzip -oq "$tmp_dir/Hack.zip" '*.ttf' -d "$font_dir"
+    rm -rf "$tmp_dir"
+    ok "Hack Nerd Font installed to $font_dir"
+    NERD_FONT_INSTALLED_NOW=true
+}
+
 section "Checking required tools"
 check_tool curl "Check your system's installation." || exit 1
 ensure_node || exit 1
+ensure_nerd_font_macos
 
 # Resolve the real, absolute path of the claude binary once (via PATH, an
 # interactive shell — since rc files often skip loading for non-interactive
@@ -407,5 +435,9 @@ echo
 echo "${C_BOLD}${C_GREEN}== Setup ready for SSH ==${C_RESET}"
 echo "1. Run: source $SHELL_RC"
 echo "2. Open a fresh session with each corresponding alias."
+if [ "$NERD_FONT_INSTALLED_NOW" = true ]; then
+    echo
+    warn "Set your terminal's font to 'Hack Nerd Font Mono' (Terminal.app: Settings > Profiles > Text; iTerm2: Settings > Profiles > Text) so the statusline separators render correctly instead of as boxes."
+fi
 echo
 info "To uninstall later, run: $0 --uninstall"
